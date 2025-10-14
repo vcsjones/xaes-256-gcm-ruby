@@ -1,12 +1,13 @@
 PATH
   remote: .
   specs:
-    Xaes256Gcm (0.1)
+    xaes_256_gcm (0.1)
 
 GEM
   remote: https://rubygems.org/
   specs:
     diff-lcs (1.5.1)
+    rake (13.3.0)
     rspec (3.13.0)
       rspec-core (~> 3.13.0)
       rspec-expectations (~> 3.13.0)
@@ -26,8 +27,9 @@ PLATFORMS
   arm64-darwin-24
 
 DEPENDENCIES
-  Xaes256Gcm!
+  rake (~> 13.3)
   rspec (~> 3.13)
+  xaes_256_gcm!
 
 BUNDLED WITH
    2.3.18
