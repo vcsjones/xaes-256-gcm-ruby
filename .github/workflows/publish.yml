@@ -29,6 +29,9 @@ jobs:
         with:
           ruby-version: '3.4'
 
+      - name: Bundle Install
+        run: bundle install --no-color
+
       - name: Publish to RubyGems
         uses: rubygems/release-gem@a25424ba2ba8b387abc8ef40807c2c85b96cbe32
 
