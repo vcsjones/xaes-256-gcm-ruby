@@ -2,7 +2,7 @@ $:.unshift File.expand_path('../lib', __FILE__)
 require "xaes_256_gcm/version"
 
 Gem::Specification.new do |s|
-  s.name = "Xaes256Gcm"
+  s.name = "xaes_256_gcm"
   s.summary = "Implements the XAES-256-GCM algorithm."
   s.version = Xaes256Gcm::VERSION
   s.license = "MIT"
