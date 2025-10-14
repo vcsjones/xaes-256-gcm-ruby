@@ -64,6 +64,7 @@ module Xaes256Gcm
       ciphertext + gcm.auth_tag
     end
 
+    # Opens, or decrypts, a ciphertext with a nonce. Optional additional authenticated data can be provided.
     def open(ciphertext, nonce, additionalData = nil)
       ct_bytes = ciphertext.bytesize
       raise InvalidNonceError if nonce.bytesize != NONCE_SIZE
