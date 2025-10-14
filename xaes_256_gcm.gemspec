@@ -8,13 +8,9 @@ Gem::Specification.new do |s|
   s.license = "MIT"
   s.homepage = "https://github.com/vcsjones/xaes_256_gcm"
   s.authors = ["vcsjones"]
-  s.email = "vcsjones@github.com"
+  s.email = "kevin@vcsjones.com"
   s.required_ruby_version = ">= 2.7"
   s.files = Dir["./lib/**/*.rb"] + ["./LICENSE.md"]
 
-  s.add_dependency "sorbet-runtime", "~> 0.5"
-
-  s.add_development_dependency "sorbet", "~> 0.5"
-  s.add_development_dependency "tapioca", "~> 0.15"
   s.add_development_dependency "rspec", "~> 3.13"
 end

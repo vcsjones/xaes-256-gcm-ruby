@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-# typed: true
 
 require "xaes_256_gcm"
 require "rspec"
@@ -7,20 +6,18 @@ require "rspec"
 include Xaes256Gcm
 
 RSpec.describe Xaes256GcmCipher do
-  T.bind(self, T::untyped) # Sorbet and rspec do not seem to get along.
-
   context "#initialize" do
 
     it "errors with a nil key" do
-      expect { Xaes256GcmCipher.new(T.unsafe(nil)) }.to raise_error(TypeError)
+      expect { Xaes256GcmCipher.new(nil) }.to raise_error(Xaes256Gcm::InvalidKeyError)
     end
 
     it "errors when given no key" do
-      expect { T.unsafe(Xaes256GcmCipher).new }.to raise_error(ArgumentError)
+      expect { Xaes256GcmCipher.new }.to raise_error(ArgumentError)
     end
 
     it "errors with a different typed key" do
-      expect { Xaes256GcmCipher.new(T.unsafe([1, 2, 3])) }.to raise_error(TypeError)
+      expect { Xaes256GcmCipher.new([1, 2, 3]) }.to raise_error(Xaes256Gcm::InvalidKeyError)
     end
 
     it "errors with too short key" do
@@ -43,7 +40,7 @@ RSpec.describe Xaes256GcmCipher do
       nonce = "B" * Xaes256GcmCipher::NONCE_SIZE
       ciphertext = xaes.seal("hello", nonce)
 
-      ciphertext_tampered = T.must(ciphertext.byteslice(0, ciphertext.bytesize - 1)) + "\0"
+      ciphertext_tampered = ciphertext.byteslice(0, ciphertext.bytesize - 1) + "\0"
 
       expect { xaes.open(ciphertext_tampered, nonce) }.to raise_error(Xaes256Gcm::InvalidCiphertextError)
     end
@@ -53,7 +50,7 @@ RSpec.describe Xaes256GcmCipher do
       nonce = "B" * Xaes256GcmCipher::NONCE_SIZE
       ciphertext = xaes.seal("hello this is a good day we are having", nonce)
 
-      ciphertext_tampered = T.must(ciphertext.byteslice(0, ciphertext.bytesize - Xaes256GcmCipher::OVERHEAD))
+      ciphertext_tampered = ciphertext.byteslice(0, ciphertext.bytesize - Xaes256GcmCipher::OVERHEAD)
 
       expect { xaes.open(ciphertext_tampered, nonce) }.to raise_error(Xaes256Gcm::InvalidCiphertextError)
     end
