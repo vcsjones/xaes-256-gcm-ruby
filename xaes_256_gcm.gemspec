@@ -8,9 +8,10 @@ Gem::Specification.new do |s|
   s.license = "MIT"
   s.homepage = "https://github.com/vcsjones/xaes_256_gcm"
   s.authors = ["vcsjones"]
-  s.email = "kevin@vcsjones.com"
+  s.email = "kevin@vcsjones.dev"
   s.required_ruby_version = ">= 2.7"
   s.files = Dir["./lib/**/*.rb"] + ["./LICENSE.md"]
 
   s.add_development_dependency "rspec", "~> 3.13"
+  s.add_development_dependency "rdoc", "~> 6.15"
 end

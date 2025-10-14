@@ -1,15 +1,28 @@
 # frozen_string_literal: true
-# typed: strict
 
+##
+# The module containing XAES-256-GCM.
 module Xaes256Gcm
+
+  # Represents an instance of the XAES-256-GCM algorithm.
   class Xaes256GcmCipher
 
+    # The nonce size of the algorithm, in bytes.
     NONCE_SIZE = 24.freeze
+
+    # The key size of the algorithm, in bytes.
     KEY_SIZE = 32.freeze
+
+    # The overhead of a ciphertext.
+    #
+    # When a plaintext is encrypted, the resulting ciphertext will be larger because of the authentication tag.
+    # This value indicates how much larger a ciphertext will be than a plaintext.
     OVERHEAD = 16.freeze
+
     BLOCK_SIZE = 16.freeze
     private_constant :BLOCK_SIZE
 
+    # Creates a new instance of the XAES-256-GCM algorithm.
     def initialize(key)
       raise InvalidKeyError.new if key.nil? || !key.is_a?(String) || key.bytesize != KEY_SIZE
 
@@ -34,6 +47,7 @@ module Xaes256Gcm
       @k1 = NoInspectBox.new(k1)
     end
 
+    # Seals, or encrypts, a plaintext with a nonce.  Optional additional authenticated data can be provided.
     def seal(plaintext, nonce, additionalData = nil)
       raise InvalidNonceError if nonce.bytesize != NONCE_SIZE
 
