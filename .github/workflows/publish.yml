@@ -1,0 +1,40 @@
+name: Publish to rubygems.org
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: read
+
+jobs:
+  push:
+    if: github.repository == 'vcsjones/xaes-256-gcm-ruby'
+    runs-on: ubuntu-latest
+
+    environment:
+      name: rubygems.org
+      url: https://rubygems.org/gems/xaes_256_gcm
+
+    permissions:
+      contents: write
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Set up Ruby ${{ matrix.ruby }}
+        uses: ruby/setup-ruby@ab177d40ee5483edb974554986f56b33477e21d0
+        with:
+          ruby-version: '3.4'
+
+      - name: Publish to RubyGems
+        uses: rubygems/release-gem@a25424ba2ba8b387abc8ef40807c2c85b96cbe32
+
+      - name: Create GitHub Release
+        run: |
+          tag_name="$(git describe --tags --abbrev=0)"
+          gh release create "${tag_name}" --verify-tag --draft --generate-notes pkg/*.gem
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
