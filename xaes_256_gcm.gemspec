@@ -13,4 +13,5 @@ Gem::Specification.new do |s|
   s.files = Dir["./lib/**/*.rb"] + ["./LICENSE.md"]
 
   s.add_development_dependency "rspec", "~> 3.13"
+  s.add_development_dependency "rake", "~> 13.3"
 end
