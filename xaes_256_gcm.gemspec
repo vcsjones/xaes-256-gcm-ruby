@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.authors = ["vcsjones"]
   s.email = "kevin@vcsjones.dev"
   s.required_ruby_version = ">= 2.7"
-  s.files = Dir["./lib/**/*.rb"] + ["./LICENSE.md"]
+  s.files = Dir["./lib/**/*.rb"] + ["./LICENSE.md", "3RD_PARTY_LICENSE"]
 
   s.add_development_dependency "rspec", "~> 3.13"
   s.add_development_dependency "rake", "~> 13.3"
