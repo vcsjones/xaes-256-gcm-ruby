@@ -6,7 +6,7 @@ Gem::Specification.new do |s|
   s.summary = "Implements the XAES-256-GCM algorithm."
   s.version = Xaes256Gcm::VERSION
   s.license = "MIT"
-  s.homepage = "https://github.com/vcsjones/xaes_256_gcm"
+  s.homepage = "https://github.com/vcsjones/xaes-256-gcm-ruby"
   s.authors = ["vcsjones"]
   s.email = "kevin@vcsjones.dev"
   s.required_ruby_version = ">= 2.7"
