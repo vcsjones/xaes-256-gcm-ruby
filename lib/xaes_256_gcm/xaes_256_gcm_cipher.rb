@@ -47,8 +47,8 @@ module Xaes256Gcm
       @k1 = NoInspectBox.new(k1)
     end
 
-    # Seals, or encrypts, a plaintext with a nonce.  Optional additional authenticated data can be provided.
-    def seal(plaintext, nonce, additionalData = nil)
+    # Encrypts a plaintext with a nonce.  Optional additional authenticated data can be provided.
+    def encrypt(plaintext, nonce, additionalData = nil)
       raise InvalidNonceError if nonce.bytesize != NONCE_SIZE
 
       key = derive_key(nonce.byteslice(0, 12))
@@ -64,14 +64,22 @@ module Xaes256Gcm
       ciphertext + gcm.auth_tag
     end
 
-    # Opens, or decrypts, a ciphertext with a nonce. Optional additional authenticated data can be provided.
-    def open(ciphertext, nonce, additionalData = nil)
+    # Seals a plaintext with a random nonce. Optional additional authenticated data can be provided.
+    def seal(plaintext, additionalData = nil)
+      nonce = OpenSSL::Random.random_bytes(NONCE_SIZE)
+      return nonce + encrypt(plaintext, nonce, additionalData)
+    end
+
+    # Decrypts a ciphertext with a nonce. Optional additional authenticated data can be provided.
+    def decrypt(ciphertext, nonce, additionalData = nil)
       ct_bytes = ciphertext.bytesize
       raise InvalidNonceError if nonce.bytesize != NONCE_SIZE
       raise InvalidCiphertextError if ciphertext.bytesize < OVERHEAD
 
       tagless_ciphertext = ciphertext.byteslice(0, ct_bytes - OVERHEAD)
       tag = ciphertext.byteslice(ct_bytes - OVERHEAD, OVERHEAD)
+
+      raise InvalidCiphertextError if tag.bytesize != OVERHEAD
 
       key = derive_key(nonce.byteslice(0, 12))
       gcm = OpenSSL::Cipher::AES256.new(:GCM)
@@ -91,6 +99,13 @@ module Xaes256Gcm
       end
 
       return plaintext
+    end
+
+    def open(ciphertext, additionalData = nil)
+      raise InvalidCiphertextError if ciphertext.nil? || ciphertext.bytesize < OVERHEAD + NONCE_SIZE
+      nonce = ciphertext.byteslice(0, NONCE_SIZE)
+      ct = ciphertext.byteslice(NONCE_SIZE, ciphertext.bytesize - NONCE_SIZE)
+      return decrypt(ct, nonce, additionalData)
     end
 
     private
@@ -114,7 +129,7 @@ module Xaes256Gcm
       end
     end
 
-    # This is just a smaller helper class that returns a redacted value for to_s and inspect.
+    # This is just a small helper class that returns a redacted value for to_s and inspect.
     # It exists to simply make sure any state on the instance is not accidentally logged or printed.
     class NoInspectBox
       def initialize(value)
