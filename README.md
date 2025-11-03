@@ -15,7 +15,6 @@ Get from Rubygem.org: https://rubygems.org/gems/xaes_256_gcm
 
 ```ruby
 require "xaes_256_gcm"
-require "securerandom"
 
 key = # assign to some key.
 plaintext = "Hello XAES-256-GCM from Ruby"
