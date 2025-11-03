@@ -2,5 +2,5 @@
 
 module Xaes256Gcm
   # The current version of the gem.
-  VERSION = "0.5"
+  VERSION = "0.7"
 end
