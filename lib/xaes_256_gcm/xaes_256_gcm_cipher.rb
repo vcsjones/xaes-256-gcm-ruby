@@ -47,8 +47,8 @@ module Xaes256Gcm
       @k1 = NoInspectBox.new(k1)
     end
 
-    # Seals, or encrypts, a plaintext with a nonce.  Optional additional authenticated data can be provided.
-    def seal(plaintext, nonce, additionalData = nil)
+    # Encrypts, a plaintext with a nonce.  Optional additional authenticated data can be provided.
+    def encrypt(plaintext, nonce, additionalData = nil)
       raise InvalidNonceError if nonce.bytesize != NONCE_SIZE
 
       key = derive_key(nonce.byteslice(0, 12))
@@ -64,8 +64,8 @@ module Xaes256Gcm
       ciphertext + gcm.auth_tag
     end
 
-    # Opens, or decrypts, a ciphertext with a nonce. Optional additional authenticated data can be provided.
-    def open(ciphertext, nonce, additionalData = nil)
+    # Decrypts, a ciphertext with a nonce. Optional additional authenticated data can be provided.
+    def decrypt(ciphertext, nonce, additionalData = nil)
       ct_bytes = ciphertext.bytesize
       raise InvalidNonceError if nonce.bytesize != NONCE_SIZE
       raise InvalidCiphertextError if ciphertext.bytesize < OVERHEAD

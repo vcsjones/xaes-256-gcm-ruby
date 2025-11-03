@@ -24,10 +24,10 @@ plaintext = "Hello XAES-256-GCM from Ruby"
 xaes = Xaes256Gcm::Xaes256GcmCipher.new(key)
 
 # Seal, or encrypt
-ciphertext = xaes.seal(plaintext, nonce)
+ciphertext = xaes.encrypt(plaintext, nonce)
 
 # Open, or decrypt
-decrypted = xaes.open(ciphertext, nonce)
+decrypted = xaes.decrypt(ciphertext, nonce)
 ```
 
 Optionally, AAD (additional authenticated data) can be passed as a 3rd argument to `seal` and `open`.
