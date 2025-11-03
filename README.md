@@ -18,19 +18,40 @@ require "xaes_256_gcm"
 require "securerandom"
 
 key = # assign to some key.
-nonce = SecureRandom.random_bytes(Xaes256Gcm::Xaes256GcmCipher::NONCE_SIZE)
 plaintext = "Hello XAES-256-GCM from Ruby"
 
 xaes = Xaes256Gcm::Xaes256GcmCipher.new(key)
 
 # Seal, or encrypt
-ciphertext = xaes.encrypt(plaintext, nonce)
+ciphertext = xaes.seal(plaintext)
 
 # Open, or decrypt
-decrypted = xaes.decrypt(ciphertext, nonce)
+decrypted = xaes.open(ciphertext)
 ```
 
-Optionally, AAD (additional authenticated data) can be passed as a 3rd argument to `seal` and `open`.
+Optionally, AAD (additional authenticated data) can be passed as a 2nd argument to `seal` and `open`.
+
+This implementation of XAES-256-GCM will generate secure nonce for you automatically when using `seal` and `open`.
+If low-level control over the nonce is required, `encrypt` and `decrypt` accept a nonce independently. It is recommended
+that the high-level `seal` and `open` that create a nonce for you is used unless strict control over the nonce is required.
+
+The "simple" nonce managed APIs are not formally specified in by C2SP. Here we define them simply as
+
+Encryption:
+
+```plain
+N = CSPRNG_bytes(24)
+ciphertext = encrypt(N, plaintext, aad)
+sealed = N || ciphertext
+```
+
+Decryption:
+
+```plain
+N = sealed[:24]
+ciphertext = sealed[24:]
+plaintext = decrypt(N, ciphertext, add)
+```
 
 # Tests
 

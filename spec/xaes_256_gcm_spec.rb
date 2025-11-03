@@ -77,6 +77,45 @@ RSpec.describe Xaes256GcmCipher do
     end
   end
 
+  context "simple" do
+    let (:key) { "\xCA" * Xaes256GcmCipher::KEY_SIZE }
+
+    it "randomly generates a nonce" do
+      xaes = Xaes256GcmCipher.new(key)
+      sealed1 = xaes.seal("potato")
+      sealed2 = xaes.seal("potato")
+      expect(sealed1).not_to eq(sealed2)
+    end
+
+    it "roundtrips with no aad" do
+      xaes = Xaes256GcmCipher.new(key)
+      plaintext = "carrots"
+
+      sealed = xaes.seal(plaintext)
+      opened = xaes.open(sealed)
+      expect(opened).to eq(plaintext)
+    end
+
+    it "roundtrips with aad" do
+      xaes = Xaes256GcmCipher.new(key)
+      plaintext = "carrots"
+      aad = "beets"
+
+      sealed = xaes.seal(plaintext, aad)
+      opened = xaes.open(sealed, aad)
+      expect(opened).to eq(plaintext)
+    end
+
+    it "can roundtrip empty" do
+      xaes = Xaes256GcmCipher.new(key)
+      plaintext = ""
+      aad = ""
+      sealed = xaes.seal(plaintext, aad)
+      opened = xaes.open(sealed, aad)
+      expect(opened).to eq(plaintext)
+    end
+  end
+
   context "test vector" do
     let(:nonce) { "ABCDEFGHIJKLMNOPQRSTUVWX" }
     let(:plaintext) { "XAES-256-GCM" }
@@ -93,6 +132,9 @@ RSpec.describe Xaes256GcmCipher do
 
       decrypted = xaes.decrypt(ciphertext, nonce)
       expect(decrypted).to eq(plaintext)
+
+      decrypted = xaes.open(nonce + ciphertext)
+      expect(decrypted).to eq(plaintext)
     end
 
     it "functions with C2SP vectors - with aad" do
@@ -108,6 +150,26 @@ RSpec.describe Xaes256GcmCipher do
 
       decrypted = xaes.decrypt(ciphertext, nonce, aad)
       expect(decrypted).to eq(plaintext)
+
+      decrypted = xaes.open(nonce + ciphertext, aad)
+      expect(decrypted).to eq(plaintext)
+    end
+  end
+
+  context "inspection" do
+    it "inspect does not reveal key" do
+      xaes = Xaes256GcmCipher.new("potato potato potato potato beet")
+      str = xaes.inspect
+      expect(str).not_to match(/potato/)
+      expect(str).not_to match(/beet/)
+      expect(str).to match(/hidden/)
+    end
+
+    it "interpolation does not reveal key" do
+      xaes = Xaes256GcmCipher.new("potato potato potato potato beet")
+      str = "#{xaes}"
+      expect(str).not_to match(/potato/)
+      expect(str).not_to match(/beet/)
     end
   end
 end
