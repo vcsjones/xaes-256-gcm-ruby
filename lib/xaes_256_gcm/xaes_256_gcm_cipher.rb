@@ -17,7 +17,13 @@ module Xaes256Gcm
     #
     # When a plaintext is encrypted, the resulting ciphertext will be larger because of the authentication tag.
     # This value indicates how much larger a ciphertext will be than a plaintext.
-    OVERHEAD = 16.freeze
+    OVERHEAD_ENCRYPTION = 16.freeze
+
+    # The overhead sealed data.
+    #
+    # When a plaintext is sealed, the resulting ciphertext will be larger.
+    # This value indicates how much larger a ciphertext will be than a plaintext.
+    OVERHEAD = (OVERHEAD_ENCRYPTION + NONCE_SIZE).freeze
 
     BLOCK_SIZE = 16.freeze
     private_constant :BLOCK_SIZE
@@ -74,12 +80,12 @@ module Xaes256Gcm
     def decrypt(ciphertext, nonce, additionalData = nil)
       ct_bytes = ciphertext.bytesize
       raise InvalidNonceError if nonce.bytesize != NONCE_SIZE
-      raise InvalidCiphertextError if ciphertext.bytesize < OVERHEAD
+      raise InvalidCiphertextError if ciphertext.bytesize < OVERHEAD_ENCRYPTION
 
-      tagless_ciphertext = ciphertext.byteslice(0, ct_bytes - OVERHEAD)
-      tag = ciphertext.byteslice(ct_bytes - OVERHEAD, OVERHEAD)
+      tagless_ciphertext = ciphertext.byteslice(0, ct_bytes - OVERHEAD_ENCRYPTION)
+      tag = ciphertext.byteslice(ct_bytes - OVERHEAD_ENCRYPTION, OVERHEAD_ENCRYPTION)
 
-      raise InvalidCiphertextError if tag.bytesize != OVERHEAD
+      raise InvalidCiphertextError if tag.bytesize != OVERHEAD_ENCRYPTION
 
       key = derive_key(nonce.byteslice(0, 12))
       gcm = OpenSSL::Cipher::AES256.new(:GCM)
@@ -102,7 +108,7 @@ module Xaes256Gcm
     end
 
     def open(ciphertext, additionalData = nil)
-      raise InvalidCiphertextError if ciphertext.nil? || ciphertext.bytesize < OVERHEAD + NONCE_SIZE
+      raise InvalidCiphertextError if ciphertext.nil? || ciphertext.bytesize < OVERHEAD
       nonce = ciphertext.byteslice(0, NONCE_SIZE)
       ct = ciphertext.byteslice(NONCE_SIZE, ciphertext.bytesize - NONCE_SIZE)
       return decrypt(ct, nonce, additionalData)
