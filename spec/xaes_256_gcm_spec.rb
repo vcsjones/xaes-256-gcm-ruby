@@ -50,7 +50,7 @@ RSpec.describe Xaes256GcmCipher do
       nonce = "B" * Xaes256GcmCipher::NONCE_SIZE
       ciphertext = xaes.encrypt("hello this is a good day we are having", nonce)
 
-      ciphertext_tampered = ciphertext.byteslice(0, ciphertext.bytesize - Xaes256GcmCipher::OVERHEAD)
+      ciphertext_tampered = ciphertext.byteslice(0, ciphertext.bytesize - Xaes256GcmCipher::OVERHEAD_ENCRYPTION)
 
       expect { xaes.decrypt(ciphertext_tampered, nonce) }.to raise_error(Xaes256Gcm::InvalidCiphertextError)
     end
