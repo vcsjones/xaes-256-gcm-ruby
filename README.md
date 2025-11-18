@@ -11,7 +11,7 @@ Resources:
 
 # Using
 
-Get from Rubygem.org: https://rubygems.org/gems/xaes_256_gcm
+Get from rubygems.org: https://rubygems.org/gems/xaes_256_gcm
 
 ```ruby
 require "xaes_256_gcm"
