@@ -37,7 +37,7 @@ jobs:
         uses: rubygems/release-gem@1c162a739e8b4cb21a676e97b087e8268d8fc40b
 
       - name: Artifact attestation
-        uses: actions/attest-build-provenance@v3
+        uses: actions/attest-build-provenance@v4
         with:
           subject-path: 'pkg/*.gem'
 
