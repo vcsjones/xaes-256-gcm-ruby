@@ -34,7 +34,7 @@ jobs:
         run: bundle install --no-color
 
       - name: Publish to RubyGems
-        uses: rubygems/release-gem@052cc82692552de3ef2b81fd670e41d13cba8092
+        uses: rubygems/release-gem@7f9650160c1a4e7989fdc9855807bdbd421d8b6b
 
       - name: Artifact attestation
         uses: actions/attest-build-provenance@v4
